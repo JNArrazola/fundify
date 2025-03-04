@@ -1,11 +1,4 @@
 <?php
-// delete_user.php
-
-// Activar la visualización de errores (solo para desarrollo)
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['tipo_usuario'] != 'admin') {
     header("Location: login.php");
@@ -31,20 +24,21 @@ if (!$user) {
     exit;
 }
 
-// Evitar eliminar (desactivar) a un administrador (opcional)
+// Evitar cambiar el estado de un administrador
 if ($user['tipo_usuario'] == 'admin') {
-    echo "No se puede eliminar un administrador.";
+    echo "No se puede cambiar el estado de un administrador.";
     exit;
 }
 
-// Realizar un "soft delete": actualizar el campo b_logico a 0
-$sql_update = "UPDATE usuarios SET b_logico = 0 WHERE id = ?";
+// Cambiar de estado: si está activo (b_logico == 1) se desactiva (0), y viceversa
+$newState = ($user['b_logico'] == 1) ? 0 : 1;
+$sql_update = "UPDATE usuarios SET b_logico = ? WHERE id = ?";
 $stmt_update = $pdo->prepare($sql_update);
-if ($stmt_update->execute([$userId])) {
-    header("Location: admin_users.php?user_deleted=1");
+if ($stmt_update->execute([$newState, $userId])) {
+    header("Location: admin_users.php?toggle=1");
     exit;
 } else {
     $errorInfo = $stmt_update->errorInfo();
-    echo "Error al desactivar el usuario: " . htmlspecialchars($errorInfo[2]);
+    echo "Error al cambiar el estado del usuario: " . htmlspecialchars($errorInfo[2]);
 }
 ?>

@@ -3,6 +3,8 @@
 require_once 'db.php';
 
 $errors = [];
+$email = ""; // variable para conservar el email
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email    = trim($_POST['email']);
     $password = $_POST['password'];
@@ -19,14 +21,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$email]);
         $user = $stmt->fetch();
+        
         if ($user && password_verify($password, $user['password'])) {
-            session_start();
-            session_regenerate_id(true);
-            $_SESSION['user_id']      = $user['id'];
-            $_SESSION['nombre']       = $user['nombre'];
-            $_SESSION['tipo_usuario'] = $user['tipo_usuario'];
-            header("Location: dashboard.php");
-            exit;
+            if ($user['b_logico'] != 1) {
+                $errors[] = "Cuenta desactivada. Por favor, contacta al administrador.";
+            } else {
+                session_start();
+                session_regenerate_id(true);
+                $_SESSION['user_id']      = $user['id'];
+                $_SESSION['nombre']       = $user['nombre'];
+                $_SESSION['tipo_usuario'] = $user['tipo_usuario'];
+                header("Location: dashboard.php");
+                exit;
+            }
         } else {
             $errors[] = "Credenciales incorrectas.";
         }
@@ -60,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <form action="login.php" method="POST">
          <div class="form-group">
             <label for="email">Correo electrónico:</label>
-            <input type="email" class="form-control" id="email" name="email" required>
+            <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
          </div>
          <div class="form-group">
             <label for="password">Contraseña:</label>
@@ -68,7 +75,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          </div>
          <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
     </form>
-    <p class="mt-3">¿No tienes cuenta? <a href="register.php">Regístrate aquí</a></p>
+    <p class="mt-3">
+      ¿No tienes cuenta? <a href="register.php">Regístrate aquí</a>
+    </p>
+    <p class="mt-3">
+      <a href="recover_password.php">¿Olvidaste tu contraseña?</a>
+    </p>
 </div>
 </body>
 </html>

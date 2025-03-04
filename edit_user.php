@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['tipo_usuario'] != 'admin') {
 require_once 'db.php';
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    header("Location: admin_panel.php");
+    header("Location: admin_users.php");  // Redirige a la sección de gestión de usuarios
     exit;
 }
 
@@ -109,7 +109,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           </div>
           <button type="submit" class="btn btn-primary">Actualizar Usuario</button>
       </form>
-      <a href="admin_panel.php" class="btn btn-secondary mt-3">Volver al Panel</a>
+      <!-- Cambiamos el enlace de "Volver" para que regrese a la gestión de usuarios -->
+      <a href="admin_users.php" class="btn btn-secondary mt-3">Volver a Gestión de Usuarios</a>
   </div>
 </body>
 </html>
