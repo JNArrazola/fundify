@@ -1,5 +1,4 @@
 <?php
-// manage_campaigns.php
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -20,8 +19,8 @@ if ($_SESSION['tipo_usuario'] != 'ong') {
 require_once 'db.php';
 
 $user_id = $_SESSION['user_id'];
-// Consultar todas las campañas de la fundación actual
-$sql = "SELECT * FROM campanas WHERE id_usuario = ? ORDER BY fecha_inicio DESC";
+// Modificamos la consulta para obtener solo campañas activas (b_logico = 1)
+$sql = "SELECT * FROM campanas WHERE id_usuario = ? AND b_logico = 1 ORDER BY fecha_inicio DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$user_id]);
 $campanas = $stmt->fetchAll();
@@ -66,7 +65,6 @@ $campanas = $stmt->fetchAll();
                         <strong>Monto Actual:</strong> $<?php echo $campana['monto_actual']; ?>
                     </p>
                     <p class="card-text">
-                        <strong>Estado:</strong> <?php echo $campana['estado']; ?> &nbsp;
                         <strong>Inicio:</strong> <?php echo $campana['fecha_inicio']; ?>,
                         <strong>Fin:</strong> <?php echo $campana['fecha_fin']; ?>
                     </p>
