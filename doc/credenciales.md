@@ -1,0 +1,10 @@
+# Credenciales
+* Fundación: 
+    * a@gmail.com  
+    * 123
+* Usuario: 
+    * usuarioq@gmail.com
+    * 123
+* Administrador
+    * admin@gmail.com
+    * admin
