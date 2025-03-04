@@ -25,7 +25,13 @@ if (!isset($_SESSION['user_id'])) {
       </div>
   </nav>
   <div class="container mt-5">
-    <?php if($_SESSION['tipo_usuario'] == 'ong'): ?>
+    <?php if($_SESSION['tipo_usuario'] == 'admin'): ?>
+        <h2>Panel de Administración</h2>
+        <p>Bienvenido, administrador. Desde aquí puedes gestionar usuarios, fundaciones y campañas, además de moderar contenido.</p>
+        <div class="mb-3">
+            <a href="admin_panel.php" class="btn btn-danger">Ir al Panel de Administración</a>
+        </div>
+    <?php elseif($_SESSION['tipo_usuario'] == 'ong'): ?>
         <h2>Panel de Gestión de Fundación</h2>
         <p>Desde aquí podrás gestionar tus campañas, ver el historial completo y actualizar la información de tu fundación.</p>
         <div class="mb-3">

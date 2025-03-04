@@ -1,15 +1,27 @@
 <?php
 // manage_campaigns.php
 session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['tipo_usuario'] != 'ong') {
+if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
 }
+
+// Si el usuario no es una fundación (ong), pero es admin, redirige al panel de administración.
+if ($_SESSION['tipo_usuario'] != 'ong') {
+    if ($_SESSION['tipo_usuario'] == 'admin') {
+        header("Location: admin_panel.php");
+        exit;
+    } else {
+        header("Location: login.php");
+        exit;
+    }
+}
+
 require_once 'db.php';
 
 $user_id = $_SESSION['user_id'];
-
-$sql = "SELECT * FROM campanas WHERE id_usuario = ? AND b_logico = 1 ORDER BY fecha_inicio DESC";
+// Consultar todas las campañas de la fundación actual
+$sql = "SELECT * FROM campanas WHERE id_usuario = ? ORDER BY fecha_inicio DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$user_id]);
 $campanas = $stmt->fetchAll();
@@ -61,7 +73,6 @@ $campanas = $stmt->fetchAll();
                     <!-- Sección de Donaciones -->
                     <h5>Donaciones:</h5>
                     <?php
-                    // Sección de Donaciones - versión con depuración
                     $campaignId = $campana['id'];
                     $sql_donations = "SELECT d.*, u.nombre AS donante FROM donaciones d 
                                       JOIN usuarios u ON d.id_usuario = u.id 

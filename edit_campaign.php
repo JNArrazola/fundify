@@ -1,7 +1,8 @@
 <?php
 // edit_campaign.php
 session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['tipo_usuario'] != 'ong') {
+// Permitir acceso solo si el usuario es 'ong' o 'admin'
+if (!isset($_SESSION['user_id']) || ($_SESSION['tipo_usuario'] != 'ong' && $_SESSION['tipo_usuario'] != 'admin')) {
     header("Location: login.php");
     exit;
 }
@@ -13,12 +14,21 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 }
 
 $campaignId = $_GET['id'];
-$user_id = $_SESSION['user_id'];
+$user_id    = $_SESSION['user_id'];
+$userType   = $_SESSION['tipo_usuario'];
 
-// Obtener la campaña y verificar que pertenezca a la fundación
-$sql = "SELECT * FROM campanas WHERE id = ? AND id_usuario = ?";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([$campaignId, $user_id]);
+// Obtener la campaña según el tipo de usuario
+if ($userType == 'ong') {
+    // Si es fundación, verificar que la campaña pertenezca al usuario
+    $sql = "SELECT * FROM campanas WHERE id = ? AND id_usuario = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$campaignId, $user_id]);
+} else { // admin
+    // El admin puede editar cualquier campaña
+    $sql = "SELECT * FROM campanas WHERE id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$campaignId]);
+}
 $campaign = $stmt->fetch();
 
 if (!$campaign) {
@@ -26,15 +36,15 @@ if (!$campaign) {
     exit;
 }
 
-$errors = [];
+$errors  = [];
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $titulo = trim($_POST['titulo']);
-    $descripcion = trim($_POST['descripcion']);
-    $meta = trim($_POST['meta']);
+    $titulo       = trim($_POST['titulo']);
+    $descripcion  = trim($_POST['descripcion']);
+    $meta         = trim($_POST['meta']);
     $fecha_inicio = $_POST['fecha_inicio'];
-    $fecha_fin = $_POST['fecha_fin'];
+    $fecha_fin    = $_POST['fecha_fin'];
     
     if (empty($titulo)) {
         $errors[] = "El título es requerido.";
@@ -53,14 +63,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     
     if (empty($errors)) {
-        $sql_update = "UPDATE campanas SET titulo = ?, descripcion = ?, meta = ?, fecha_inicio = ?, fecha_fin = ? WHERE id = ? AND id_usuario = ?";
+        if ($userType == 'ong') {
+            $sql_update = "UPDATE campanas SET titulo = ?, descripcion = ?, meta = ?, fecha_inicio = ?, fecha_fin = ? WHERE id = ? AND id_usuario = ?";
+            $params = [$titulo, $descripcion, $meta, $fecha_inicio, $fecha_fin, $campaignId, $user_id];
+        } else { // admin
+            $sql_update = "UPDATE campanas SET titulo = ?, descripcion = ?, meta = ?, fecha_inicio = ?, fecha_fin = ? WHERE id = ?";
+            $params = [$titulo, $descripcion, $meta, $fecha_inicio, $fecha_fin, $campaignId];
+        }
         $stmt_update = $pdo->prepare($sql_update);
-        if ($stmt_update->execute([$titulo, $descripcion, $meta, $fecha_inicio, $fecha_fin, $campaignId, $user_id])) {
+        if ($stmt_update->execute($params)) {
             $success = "Campaña actualizada correctamente.";
             // Actualizar los datos de la campaña
-            $sql = "SELECT * FROM campanas WHERE id = ? AND id_usuario = ?";
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute([$campaignId, $user_id]);
+            if ($userType == 'ong') {
+                $sql = "SELECT * FROM campanas WHERE id = ? AND id_usuario = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$campaignId, $user_id]);
+            } else {
+                $sql = "SELECT * FROM campanas WHERE id = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([$campaignId]);
+            }
             $campaign = $stmt->fetch();
         } else {
             $errors[] = "Error al actualizar la campaña.";
