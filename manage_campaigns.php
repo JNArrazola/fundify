@@ -62,13 +62,25 @@ $campanas = $stmt->fetchAll();
                     <!-- Sección de Donaciones -->
                     <h5>Donaciones:</h5>
                     <?php
-                    // Consultar las donaciones de esta campaña
+                    // Sección de Donaciones - versión con depuración
+                    $campaignId = $campana['id'];
+                    // Para depuración: descomenta la siguiente línea si deseas ver el ID de la campaña
+                    // echo "Campaña ID: " . $campaignId . "<br>";
+
                     $sql_donations = "SELECT d.*, u.nombre AS donante FROM donaciones d 
                                       JOIN usuarios u ON d.id_usuario = u.id 
                                       WHERE d.id_campana = ? ORDER BY d.fecha_donacion DESC";
                     $stmt_donations = $pdo->prepare($sql_donations);
-                    $stmt_donations->execute([$campana['id']]);
-                    $donaciones = $stmt_donations->fetchAll();
+
+                    if (!$stmt_donations->execute([$campaignId])) {
+                        // Si hay error, se muestra el error
+                        $errorInfo = $stmt_donations->errorInfo();
+                        echo "<p>Error en la consulta de donaciones: " . htmlspecialchars($errorInfo[2]) . "</p>";
+                    } else {
+                        $donaciones = $stmt_donations->fetchAll();
+                        // Para depuración: descomenta la siguiente línea para ver cuántas donaciones se encontraron
+                        // echo "Donaciones encontradas: " . count($donaciones) . "<br>";
+                    }
                     ?>
                     <?php if(empty($donaciones)): ?>
                         <p>No se han realizado donaciones para esta campaña.</p>
