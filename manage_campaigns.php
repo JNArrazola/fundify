@@ -9,8 +9,7 @@ require_once 'db.php';
 
 $user_id = $_SESSION['user_id'];
 
-// Consultar todas las campañas de la fundación actual
-$sql = "SELECT * FROM campanas WHERE id_usuario = ? ORDER BY fecha_inicio DESC";
+$sql = "SELECT * FROM campanas WHERE id_usuario = ? AND b_logico = 1 ORDER BY fecha_inicio DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$user_id]);
 $campanas = $stmt->fetchAll();
@@ -64,22 +63,15 @@ $campanas = $stmt->fetchAll();
                     <?php
                     // Sección de Donaciones - versión con depuración
                     $campaignId = $campana['id'];
-                    // Para depuración: descomenta la siguiente línea si deseas ver el ID de la campaña
-                    // echo "Campaña ID: " . $campaignId . "<br>";
-
                     $sql_donations = "SELECT d.*, u.nombre AS donante FROM donaciones d 
                                       JOIN usuarios u ON d.id_usuario = u.id 
                                       WHERE d.id_campana = ? ORDER BY d.fecha_donacion DESC";
                     $stmt_donations = $pdo->prepare($sql_donations);
-
                     if (!$stmt_donations->execute([$campaignId])) {
-                        // Si hay error, se muestra el error
                         $errorInfo = $stmt_donations->errorInfo();
                         echo "<p>Error en la consulta de donaciones: " . htmlspecialchars($errorInfo[2]) . "</p>";
                     } else {
                         $donaciones = $stmt_donations->fetchAll();
-                        // Para depuración: descomenta la siguiente línea para ver cuántas donaciones se encontraron
-                        // echo "Donaciones encontradas: " . count($donaciones) . "<br>";
                     }
                     ?>
                     <?php if(empty($donaciones)): ?>
@@ -106,9 +98,9 @@ $campanas = $stmt->fetchAll();
                             </tbody>
                         </table>
                     <?php endif; ?>
-                    <!-- Opciones para editar o eliminar la campaña -->
+                    <!-- Opciones para editar o deshabilitar la campaña -->
                     <a href="edit_campaign.php?id=<?php echo $campana['id']; ?>" class="btn btn-warning btn-sm">Editar Campaña</a>
-                    <a href="delete_campaign.php?id=<?php echo $campana['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas eliminar esta campaña?');">Eliminar Campaña</a>
+                    <a href="delete_campaign.php?id=<?php echo $campana['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas deshabilitar esta campaña?');">Deshabilitar Campaña</a>
                 </div>
             </div>
         <?php endforeach; ?>

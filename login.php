@@ -14,16 +14,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors[] = 'La contraseña es requerida.';
     }
     
-    if(empty($errors)) {
+    if (empty($errors)) {
         $sql = "SELECT * FROM usuarios WHERE email = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$email]);
         $user = $stmt->fetch();
-        if($user && password_verify($password, $user['password'])) {
+        if ($user && password_verify($password, $user['password'])) {
             session_start();
-            $_SESSION['user_id']     = $user['id'];
-            $_SESSION['nombre']      = $user['nombre'];
-            $_SESSION['tipo_usuario']= $user['tipo_usuario'];
+            session_regenerate_id(true);
+            $_SESSION['user_id']      = $user['id'];
+            $_SESSION['nombre']       = $user['nombre'];
+            $_SESSION['tipo_usuario'] = $user['tipo_usuario'];
             header("Location: dashboard.php");
             exit;
         } else {

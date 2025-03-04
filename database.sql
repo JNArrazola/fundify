@@ -80,3 +80,5 @@ CREATE TABLE publicidad (
     estado ENUM('activo', 'inactivo') DEFAULT 'activo',
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
+
+ALTER TABLE campanas ADD COLUMN b_logico TINYINT(1) NOT NULL DEFAULT 1;
