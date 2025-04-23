@@ -12,6 +12,71 @@ if (isset($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <title>Bienvenido a Fundify</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+    <style>
+      /* Paleta personalizada para Fundify */
+      body {
+        background-color: #f4f6fa;
+        color: #2c2c2c;
+      }
+
+      .navbar {
+        background-color: #2b2d42 !important;
+      }
+
+      .navbar .navbar-brand,
+      .navbar .nav-link {
+        color: #ffffff !important;
+      }
+
+      .navbar .nav-link:hover {
+        color: #adb5bd !important;
+      }
+
+      .jumbotron {
+        background-color: #ffffff;
+        border-left: 6px solid #6c63ff;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        padding: 3rem 2rem;
+      }
+
+      .btn-primary {
+        background-color: #6c63ff;
+        border-color: #6c63ff;
+      }
+
+      .btn-primary:hover {
+        background-color: #574fd6;
+        border-color: #574fd6;
+      }
+
+      .btn-secondary {
+        background-color: #adb5bd;
+        border-color: #adb5bd;
+        color: #212529;
+      }
+
+      .btn-secondary:hover {
+        background-color: #868e96;
+        border-color: #868e96;
+        color: white;
+      }
+
+      .btn-info {
+        background-color: #48cae4;
+        border-color: #48cae4;
+        color: white;
+      }
+
+      .btn-info:hover {
+        background-color: #2ec4b6;
+        border-color: #2ec4b6;
+      }
+
+      .lead {
+        color: #495057;
+      }
+    </style>
 </head>
 <body>
 <!-- Navbar -->

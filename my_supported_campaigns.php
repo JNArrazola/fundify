@@ -27,6 +27,74 @@ $supported_campaigns = $stmt->fetchAll();
   <meta charset="UTF-8">
   <title>Campañas Apoyadas - Fundify</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f4f6fa;
+      color: #2c2c2c;
+    }
+
+    .container {
+      margin-top: 50px;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      color: #2b2d42;
+      margin-bottom: 20px;
+    }
+
+    .navbar {
+      background-color: #2b2d42 !important;
+    }
+
+    .navbar .navbar-brand,
+    .navbar .nav-link {
+      color: #ffffff !important;
+    }
+
+    .navbar .nav-link:hover {
+      color: #adb5bd !important;
+    }
+
+    .btn-primary {
+      background-color: #6c63ff;
+      border-color: #6c63ff;
+    }
+
+    .btn-primary:hover {
+      background-color: #574fd6;
+      border-color: #574fd6;
+    }
+
+    .btn-secondary {
+      background-color: #adb5bd;
+      border-color: #adb5bd;
+      color: #212529;
+    }
+
+    .btn-secondary:hover {
+      background-color: #868e96;
+      border-color: #868e96;
+      color: white;
+    }
+
+    table th {
+      background-color: #6c63ff;
+      color: white;
+    }
+
+    table td {
+      vertical-align: middle;
+    }
+
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 0.875rem;
+    }
+  </style>
 </head>
 <body>
   <!-- Navbar -->
@@ -39,7 +107,8 @@ $supported_campaigns = $stmt->fetchAll();
           </ul>
       </div>
   </nav>
-  <div class="container mt-5">
+
+  <div class="container">
       <h2>Mis Campañas Apoyadas</h2>
       <?php if(empty($supported_campaigns)): ?>
           <p>Aún no has apoyado ninguna campaña.</p>
@@ -75,7 +144,7 @@ $supported_campaigns = $stmt->fetchAll();
               </tbody>
           </table>
       <?php endif; ?>
-      <a href="dashboard.php" class="btn btn-secondary">Volver al Dashboard</a>
+      <a href="dashboard.php" class="btn btn-secondary mt-3">Volver al Dashboard</a>
   </div>
 </body>
 </html>

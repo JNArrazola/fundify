@@ -48,20 +48,67 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <title>Registro - Fundify</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6fa;
+            color: #2c2c2c;
+        }
+
+        h2 {
+            color: #2b2d42;
+        }
+
+        .container {
+            max-width: 500px;
+            margin-top: 60px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-primary {
+            background-color: #6c63ff;
+            border-color: #6c63ff;
+        }
+
+        .btn-primary:hover {
+            background-color: #574fd6;
+            border-color: #574fd6;
+        }
+
+        .alert-danger {
+            background-color: #ffe3e3;
+            border-color: #ff6b6b;
+            color: #c92a2a;
+        }
+
+        label {
+            font-weight: 500;
+        }
+
+        a {
+            color: #6c63ff;
+        }
+
+        a:hover {
+            color: #574fd6;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-    <h2 class="mt-5">Registro de Usuario</h2>
+    <h2 class="text-center">Registro de Usuario</h2>
     <?php if(!empty($errors)): ?>
-        <div class="alert alert-danger">
-            <ul>
+        <div class="alert alert-danger mt-4">
+            <ul class="mb-0">
                 <?php foreach($errors as $error): ?>
                 <li><?php echo htmlspecialchars($error); ?></li>
                 <?php endforeach; ?>
             </ul>
         </div>
     <?php endif; ?>
-    <form action="register.php" method="POST">
+    <form action="register.php" method="POST" class="mt-4">
         <div class="form-group">
             <label for="nombre">Nombre:</label>
             <input type="text" class="form-control" id="nombre" name="nombre" required>
@@ -78,9 +125,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <label for="confirm_password">Confirmar Contraseña:</label>
             <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
          </div>
-         <button type="submit" class="btn btn-primary">Registrarse</button>
+         <button type="submit" class="btn btn-primary btn-block mt-3">Registrarse</button>
     </form>
-    <p class="mt-3">¿Ya tienes una cuenta? <a href="login.php">Inicia sesión</a></p>
+    <p class="mt-3 text-center">¿Ya tienes una cuenta? <a href="login.php">Inicia sesión</a></p>
 </div>
 </body>
 </html>

@@ -3,7 +3,7 @@
     * a@gmail.com  
     * 123
 * Usuario: 
-    * usuarioq@gmail.com
+    * usuario@gmail.com
     * 123
 * Administrador
     * admin@gmail.com

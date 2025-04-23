@@ -15,6 +15,73 @@ $fundaciones = $stmt->fetchAll();
   <meta charset="UTF-8">
   <title>Explorar Fundaciones - Fundify</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f4f6fa;
+      color: #2c2c2c;
+    }
+
+    .container {
+      margin-top: 50px;
+      margin-bottom: 50px;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    h1 {
+      color: #2b2d42;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .navbar {
+      background-color: #2b2d42 !important;
+    }
+
+    .navbar .navbar-brand,
+    .navbar .nav-link {
+      color: #ffffff !important;
+    }
+
+    .navbar .nav-link:hover {
+      color: #adb5bd !important;
+    }
+
+    .card {
+      border: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+    }
+
+    .card-title {
+      font-weight: bold;
+      color: #2b2d42;
+    }
+
+    .btn-primary {
+      background-color: #6c63ff;
+      border-color: #6c63ff;
+    }
+
+    .btn-primary:hover {
+      background-color: #574fd6;
+      border-color: #574fd6;
+    }
+
+    .btn-secondary {
+      background-color: #adb5bd;
+      border-color: #adb5bd;
+      color: #212529;
+    }
+
+    .btn-secondary:hover {
+      background-color: #868e96;
+      border-color: #868e96;
+      color: white;
+    }
+  </style>
 </head>
 <body>
 <!-- Navbar -->
@@ -32,8 +99,9 @@ $fundaciones = $stmt->fetchAll();
     </ul>
   </div>
 </nav>
-<div class="container my-5">
-  <h1 class="mb-4">Explorar Fundaciones</h1>
+
+<div class="container">
+  <h1>Explorar Fundaciones</h1>
   <div class="row">
     <?php foreach($fundaciones as $fundacion): ?>
       <div class="col-md-4">
@@ -47,7 +115,9 @@ $fundaciones = $stmt->fetchAll();
       </div>
     <?php endforeach; ?>
   </div>
-  <a href="dashboard.php" class="btn btn-secondary">Volver al Dashboard</a>
+  <div class="text-center mt-4">
+    <a href="dashboard.php" class="btn btn-secondary">Volver al Dashboard</a>
+  </div>
 </div>
 </body>
 </html>

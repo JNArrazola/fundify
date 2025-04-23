@@ -83,3 +83,44 @@ CREATE TABLE publicidad (
 
 ALTER TABLE campanas ADD COLUMN b_logico TINYINT(1) NOT NULL DEFAULT 1;
 ALTER TABLE usuarios ADD COLUMN b_logico TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE usuarios ADD puntos INT DEFAULT 0;
+
+CREATE TABLE recompensas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    puntos_requeridos INT NOT NULL,
+    imagen VARCHAR(255),
+    stock INT DEFAULT 1
+);
+
+INSERT INTO recompensas (nombre, descripcion, puntos_requeridos, imagen, stock) VALUES
+('Tarjeta Spotify 3 Meses', 'Accede a Spotify Premium por 3 meses.', 1500, 'img/spotify.png', 10),
+('Tarjeta Amazon $200MXN', 'Crédito en Amazon México.', 3000, 'img/amazon.png', 5),
+('Audífonos Bluetooth', 'Audífonos inalámbricos.', 5000, 'img/audifonos.png', 3),
+('Teclado Mecánico Básico', 'Teclado mecánico retroiluminado.', 6500, 'img/teclado.png', 2),
+('Tarjeta Netflix 1 Mes', 'Acceso a Netflix durante un mes.', 1200, 'img/netflix.png', 8),
+('Tarjeta Apple $300MXN', 'Crédito en iTunes/App Store.', 3500, 'img/apple.png', 4),
+('Celular Económico', 'Smartphone básico Android.', 12000, 'img/celular.png', 1);
+
+CREATE TABLE canjes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_recompensa INT NOT NULL,
+    fecha DATETIME NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
+    FOREIGN KEY (id_recompensa) REFERENCES recompensas(id)
+);
+
+DROP TABLE canjes;
+
+CREATE TABLE canjes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_recompensa INT NOT NULL,
+    direccion VARCHAR(255),
+    nombre_completo VARCHAR(100),
+    telefono VARCHAR(20),
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

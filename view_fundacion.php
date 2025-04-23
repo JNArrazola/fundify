@@ -32,6 +32,73 @@ $campanas = $stmt->fetchAll();
   <meta charset="UTF-8">
   <title><?php echo htmlspecialchars($fundacion['nombre']); ?> - Campañas</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f4f6fa;
+      color: #2c2c2c;
+    }
+
+    .container {
+      margin-top: 50px;
+      margin-bottom: 50px;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    h1 {
+      color: #2b2d42;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .navbar {
+      background-color: #2b2d42 !important;
+    }
+
+    .navbar .navbar-brand,
+    .navbar .nav-link {
+      color: #ffffff !important;
+    }
+
+    .navbar .nav-link:hover {
+      color: #adb5bd !important;
+    }
+
+    .card {
+      border: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+    }
+
+    .card-title {
+      font-weight: bold;
+      color: #2b2d42;
+    }
+
+    .btn-success {
+      background-color: #06d6a0;
+      border-color: #06d6a0;
+    }
+
+    .btn-success:hover {
+      background-color: #05c091;
+      border-color: #05c091;
+    }
+
+    .btn-secondary {
+      background-color: #adb5bd;
+      border-color: #adb5bd;
+      color: #212529;
+    }
+
+    .btn-secondary:hover {
+      background-color: #868e96;
+      border-color: #868e96;
+      color: white;
+    }
+  </style>
 </head>
 <body>
 <!-- Navbar -->
@@ -50,8 +117,9 @@ $campanas = $stmt->fetchAll();
     </ul>
   </div>
 </nav>
-<div class="container my-5">
-  <h1 class="mb-4">Campañas de <?php echo htmlspecialchars($fundacion['nombre']); ?></h1>
+
+<div class="container">
+  <h1>Campañas de <?php echo htmlspecialchars($fundacion['nombre']); ?></h1>
   <?php if(empty($campanas)): ?>
     <p>No hay campañas activas en este momento.</p>
   <?php else: ?>
@@ -71,7 +139,9 @@ $campanas = $stmt->fetchAll();
     <?php endforeach; ?>
   </div>
   <?php endif; ?>
-  <a href="home.php" class="btn btn-secondary">Volver a Inicio</a>
+  <div class="text-center mt-4">
+    <a href="home.php" class="btn btn-secondary">Volver a Inicio</a>
+  </div>
 </div>
 </body>
 </html>
