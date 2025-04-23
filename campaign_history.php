@@ -21,6 +21,77 @@ $campanas = $stmt->fetchAll();
   <meta charset="UTF-8">
   <title>Historial de Campañas - Fundify</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f4f6fa;
+      color: #2c2c2c;
+    }
+
+    .navbar {
+      background-color: #2b2d42 !important;
+    }
+
+    .navbar .navbar-brand,
+    .navbar .nav-link {
+      color: #ffffff !important;
+    }
+
+    .container {
+      margin-top: 50px;
+      margin-bottom: 50px;
+    }
+
+    h2 {
+      color: #2b2d42;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-title {
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: #2b2d42;
+    }
+
+    .btn-success {
+      background-color: #06d6a0;
+      border-color: #06d6a0;
+    }
+
+    .btn-success:hover {
+      background-color: #05c091;
+      border-color: #05c091;
+    }
+
+    .btn-secondary {
+      background-color: #adb5bd;
+      border-color: #adb5bd;
+      color: #212529;
+    }
+
+    .btn-secondary:hover {
+      background-color: #868e96;
+      border-color: #868e96;
+      color: white;
+    }
+
+    .text-danger {
+      font-weight: 500;
+      color: #e63946 !important;
+    }
+
+    .text-success {
+      font-weight: 500;
+      color: #2a9d8f !important;
+    }
+  </style>
 </head>
 <body>
   <!-- Navbar -->
@@ -33,25 +104,28 @@ $campanas = $stmt->fetchAll();
          </ul>
       </div>
   </nav>
-  <div class="container mt-5">
+
+  <div class="container">
       <h2>Historial de Campañas</h2>
+
       <?php if(empty($campanas)): ?>
-          <p>No tienes campañas registradas.</p>
+          <p class="text-center">No tienes campañas registradas.</p>
       <?php else: ?>
           <?php foreach($campanas as $campana): ?>
-              <div class="card mb-3">
+              <div class="card mb-4">
                   <div class="card-body">
                       <h4 class="card-title"><?php echo htmlspecialchars($campana['titulo']); ?></h4>
                       <p class="card-text"><?php echo htmlspecialchars($campana['descripcion']); ?></p>
                       <p class="card-text">
-                          <strong>Meta:</strong> $<?php echo $campana['meta']; ?>, 
+                          <strong>Meta:</strong> $<?php echo $campana['meta']; ?> &nbsp;
                           <strong>Monto Actual:</strong> $<?php echo $campana['monto_actual']; ?>
                       </p>
                       <p class="card-text">
-                          <strong>Estado:</strong> <?php echo $campana['estado']; ?>,
-                          <strong>Inicio:</strong> <?php echo $campana['fecha_inicio']; ?>,
+                          <strong>Estado:</strong> <?php echo $campana['estado']; ?> <br>
+                          <strong>Inicio:</strong> <?php echo $campana['fecha_inicio']; ?> &nbsp;
                           <strong>Fin:</strong> <?php echo $campana['fecha_fin']; ?>
                       </p>
+
                       <?php if($campana['b_logico'] == 0): ?>
                           <p class="text-danger">Campaña deshabilitada</p>
                           <a href="reactivate_campaign.php?id=<?php echo $campana['id']; ?>" class="btn btn-success btn-sm">Reactivar Campaña</a>
@@ -62,7 +136,10 @@ $campanas = $stmt->fetchAll();
               </div>
           <?php endforeach; ?>
       <?php endif; ?>
-      <a href="dashboard.php" class="btn btn-secondary">Volver al Dashboard</a>
+
+      <div class="text-center mt-4">
+          <a href="dashboard.php" class="btn btn-secondary">Volver al Dashboard</a>
+      </div>
   </div>
 </body>
 </html>

@@ -20,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     
     if (empty($errors)) {
-        // Verifica si existe un usuario con ese correo
         $sql = "SELECT * FROM usuarios WHERE email = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$email]);
@@ -29,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!$user) {
             $errors[] = "No se encontró un usuario con ese correo.";
         } else {
-            // Actualizar la contraseña usando password_hash para seguridad
             $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
             $sql_update = "UPDATE usuarios SET password = ? WHERE email = ?";
             $stmt_update = $pdo->prepare($sql_update);
@@ -48,22 +46,84 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <meta charset="UTF-8">
   <title>Recuperar Contraseña - Fundify</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f4f6fa;
+      color: #2c2c2c;
+    }
+
+    .container {
+      margin-top: 60px;
+      margin-bottom: 60px;
+      max-width: 500px;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2b2d42;
+      font-weight: 700;
+      margin-bottom: 25px;
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background-color: #6c63ff;
+      border-color: #6c63ff;
+    }
+
+    .btn-primary:hover {
+      background-color: #574fd6;
+      border-color: #574fd6;
+    }
+
+    .alert-danger {
+      background-color: #ffe3e3;
+      border-color: #ff6b6b;
+      color: #c92a2a;
+    }
+
+    .alert-success {
+      background-color: #d1e7dd;
+      border-color: #badbcc;
+      color: #0f5132;
+    }
+
+    a {
+      color: #6c63ff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #574fd6;
+    }
+  </style>
 </head>
 <body>
-<div class="container mt-5">
+<div class="container">
   <h2>Recuperar Contraseña</h2>
+
   <?php if (!empty($errors)): ?>
     <div class="alert alert-danger">
-      <ul>
+      <ul class="mb-0">
         <?php foreach($errors as $error): ?>
           <li><?php echo htmlspecialchars($error); ?></li>
         <?php endforeach; ?>
       </ul>
     </div>
   <?php endif; ?>
+
   <?php if ($success): ?>
     <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
   <?php endif; ?>
+
   <form action="recover_password.php" method="POST">
      <div class="form-group">
          <label for="email">Correo Electrónico:</label>
@@ -77,9 +137,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          <label for="confirm_password">Confirmar Contraseña:</label>
          <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
      </div>
-     <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
+     <button type="submit" class="btn btn-primary btn-block">Actualizar Contraseña</button>
   </form>
-  <p class="mt-3"><a href="login.php">Volver a Iniciar Sesión</a></p>
+
+  <p class="mt-4 text-center"><a href="login.php">← Volver a Iniciar Sesión</a></p>
 </div>
 </body>
 </html>

@@ -19,7 +19,6 @@ if ($_SESSION['tipo_usuario'] != 'ong') {
 require_once 'db.php';
 
 $user_id = $_SESSION['user_id'];
-// Modificamos la consulta para obtener solo campañas activas (b_logico = 1)
 $sql = "SELECT * FROM campanas WHERE id_usuario = ? AND b_logico = 1 ORDER BY fecha_inicio DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$user_id]);
@@ -31,6 +30,92 @@ $campanas = $stmt->fetchAll();
     <meta charset="UTF-8">
     <title>Gestionar Campañas - Fundify</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6fa;
+            color: #2c2c2c;
+        }
+
+        .navbar {
+            background-color: #2b2d42 !important;
+        }
+
+        .navbar .navbar-brand,
+        .navbar .nav-link {
+            color: #ffffff !important;
+        }
+
+        .container {
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        h2 {
+            color: #2b2d42;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-title {
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: #2b2d42;
+        }
+
+        .btn-primary {
+            background-color: #6c63ff;
+            border-color: #6c63ff;
+        }
+
+        .btn-primary:hover {
+            background-color: #574fd6;
+            border-color: #574fd6;
+        }
+
+        .btn-secondary {
+            background-color: #adb5bd;
+            border-color: #adb5bd;
+            color: #212529;
+        }
+
+        .btn-secondary:hover {
+            background-color: #868e96;
+            border-color: #868e96;
+            color: white;
+        }
+
+        .btn-warning {
+            color: #212529;
+            background-color: #ffdd57;
+            border-color: #ffdd57;
+        }
+
+        .btn-warning:hover {
+            background-color: #f5c518;
+            border-color: #f5c518;
+        }
+
+        .btn-danger {
+            background-color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .btn-danger:hover {
+            background-color: #e63946;
+            border-color: #e63946;
+        }
+
+        .table-sm th, .table-sm td {
+            font-size: 0.875rem;
+        }
+    </style>
 </head>
 <body>
 <!-- Navbar -->
@@ -50,10 +135,12 @@ $campanas = $stmt->fetchAll();
        </ul>
     </div>
 </nav>
-<div class="container mt-5">
+
+<div class="container">
     <h2>Gestionar Mis Campañas</h2>
+
     <?php if(empty($campanas)): ?>
-        <p>No tienes campañas registradas. <a href="create_campaign.php" class="btn btn-primary">Crear Nueva Campaña</a></p>
+        <p class="text-center">No tienes campañas registradas.</p>
     <?php else: ?>
         <?php foreach($campanas as $campana): ?>
             <div class="card mb-4">
@@ -68,7 +155,8 @@ $campanas = $stmt->fetchAll();
                         <strong>Inicio:</strong> <?php echo $campana['fecha_inicio']; ?>,
                         <strong>Fin:</strong> <?php echo $campana['fecha_fin']; ?>
                     </p>
-                    <!-- Sección de Donaciones -->
+
+                    <!-- Donaciones -->
                     <h5>Donaciones:</h5>
                     <?php
                     $campaignId = $campana['id'];
@@ -76,12 +164,8 @@ $campanas = $stmt->fetchAll();
                                       JOIN usuarios u ON d.id_usuario = u.id 
                                       WHERE d.id_campana = ? ORDER BY d.fecha_donacion DESC";
                     $stmt_donations = $pdo->prepare($sql_donations);
-                    if (!$stmt_donations->execute([$campaignId])) {
-                        $errorInfo = $stmt_donations->errorInfo();
-                        echo "<p>Error en la consulta de donaciones: " . htmlspecialchars($errorInfo[2]) . "</p>";
-                    } else {
-                        $donaciones = $stmt_donations->fetchAll();
-                    }
+                    $stmt_donations->execute([$campaignId]);
+                    $donaciones = $stmt_donations->fetchAll();
                     ?>
                     <?php if(empty($donaciones)): ?>
                         <p>No se han realizado donaciones para esta campaña.</p>
@@ -107,15 +191,19 @@ $campanas = $stmt->fetchAll();
                             </tbody>
                         </table>
                     <?php endif; ?>
-                    <!-- Opciones para editar o deshabilitar la campaña -->
+
+                    <!-- Acciones -->
                     <a href="edit_campaign.php?id=<?php echo $campana['id']; ?>" class="btn btn-warning btn-sm">Editar Campaña</a>
                     <a href="delete_campaign.php?id=<?php echo $campana['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas deshabilitar esta campaña?');">Deshabilitar Campaña</a>
                 </div>
             </div>
         <?php endforeach; ?>
     <?php endif; ?>
-    <a href="create_campaign.php" class="btn btn-primary">Crear Nueva Campaña</a>
-    <a href="dashboard.php" class="btn btn-secondary">Volver al Dashboard</a>
+
+    <div class="text-center mt-4">
+        <a href="create_campaign.php" class="btn btn-primary mr-2">Crear Nueva Campaña</a>
+        <a href="dashboard.php" class="btn btn-secondary">Volver al Dashboard</a>
+    </div>
 </div>
 </body>
 </html>

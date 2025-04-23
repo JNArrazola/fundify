@@ -124,3 +124,25 @@ CREATE TABLE canjes (
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+ALTER TABLE usuarios 
+  ADD COLUMN imagen VARCHAR(255) DEFAULT NULL,
+  ADD COLUMN documento_validacion VARCHAR(255) DEFAULT NULL,
+  ADD COLUMN metodo_pago TEXT DEFAULT NULL,
+  ADD COLUMN verificada TINYINT(1) NOT NULL DEFAULT 0,
+  ADD COLUMN contacto VARCHAR(100) DEFAULT NULL,
+  ADD COLUMN direccion VARCHAR(255) DEFAULT NULL;
+
+ALTER TABLE recompensas
+ADD COLUMN tipo_entrega ENUM('virtual', 'fisico') NOT NULL DEFAULT 'fisico';
+
+DELETE FROM recompensas;
+
+INSERT INTO recompensas (nombre, descripcion, puntos_requeridos, imagen, stock, tipo_entrega) VALUES
+('Tarjeta Spotify 3 Meses', 'Accede a Spotify Premium por 3 meses.', 1500, 'img/spotify.png', 10, "virtual"),
+('Tarjeta Amazon $200MXN', 'Crédito en Amazon México.', 3000, 'img/amazon.png', 5, "virtual"),
+('Audífonos Bluetooth', 'Audífonos inalámbricos.', 5000, 'img/audifonos.png', 3, "fisico"),
+('Teclado Mecánico', 'Teclado mecánico retroiluminado.', 6500, 'img/teclado.png', 2, "fisico"),
+('Tarjeta Netflix 1 Mes', 'Acceso a Netflix durante un mes.', 1200, 'img/netflix.png', 8, "virtual"),
+('Tarjeta Apple $300MXN', 'Crédito en iTunes/App Store.', 3500, 'img/apple.png', 4, "virtual"),
+('iPhone 15', 'iPhone 15 de la marca Apple.', 12000, 'img/celular.png', 1, "fisico");
+

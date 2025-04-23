@@ -1,5 +1,4 @@
 <?php
-// redeem.php
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['tipo_usuario'] !== 'donante') {
     header("Location: login.php");
@@ -7,14 +6,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['tipo_usuario'] !== 'donante') {
 }
 require_once 'db.php';
 
-// Obtener ID de la recompensa
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: rewards_store.php");
     exit;
 }
 $producto_id = $_GET['id'];
 
-// Obtener datos del producto
 $stmt = $pdo->prepare("SELECT * FROM recompensas WHERE id = ?");
 $stmt->execute([$producto_id]);
 $producto = $stmt->fetch();
@@ -24,7 +21,8 @@ if (!$producto) {
     exit;
 }
 
-// Obtener puntos del usuario
+$es_virtual = isset($producto['tipo_entrega']) && $producto['tipo_entrega'] === 'virtual';
+
 $stmt = $pdo->prepare("SELECT puntos FROM usuarios WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $usuario = $stmt->fetch();
@@ -34,22 +32,20 @@ $puntos_requeridos = $producto['puntos_requeridos'];
 
 $errors = [];
 $success = "";
-
 $direccion = "";
 $telefono = "";
 $confirmacion = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $direccion = trim($_POST['direccion']);
-    $telefono = trim($_POST['telefono']);
+    $direccion = $es_virtual ? 'Entrega virtual' : trim($_POST['direccion']);
+    $telefono = $es_virtual ? 'Código: ' . strtoupper(bin2hex(random_bytes(4))) : trim($_POST['telefono']);
     $confirmacion = $_POST['confirmacion'] ?? "";
 
-    if (empty($direccion)) {
-        $errors[] = "La dirección es obligatoria.";
+    if (!$es_virtual) {
+        if (empty($direccion)) $errors[] = "La dirección es obligatoria.";
+        if (empty($telefono)) $errors[] = "El teléfono es obligatorio.";
     }
-    if (empty($telefono)) {
-        $errors[] = "El teléfono es obligatorio.";
-    }
+
     if ($confirmacion !== 'on') {
         $errors[] = "Debes confirmar que deseas realizar el canje.";
     }
@@ -59,21 +55,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        // Descontar puntos y reducir stock
         $pdo->beginTransaction();
         try {
-            $stmt = $pdo->prepare("UPDATE usuarios SET puntos = puntos - ? WHERE id = ?");
-            $stmt->execute([$puntos_requeridos, $_SESSION['user_id']]);
+            $pdo->prepare("UPDATE usuarios SET puntos = puntos - ? WHERE id = ?")
+                ->execute([$puntos_requeridos, $_SESSION['user_id']]);
 
-            $stmt = $pdo->prepare("UPDATE recompensas SET stock = stock - 1 WHERE id = ?");
-            $stmt->execute([$producto_id]);
+            $pdo->prepare("UPDATE recompensas SET stock = stock - 1 WHERE id = ?")
+                ->execute([$producto_id]);
 
-            // Registrar canje
-            $stmt = $pdo->prepare("INSERT INTO canjes (id_usuario, id_recompensa, direccion, telefono) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$_SESSION['user_id'], $producto_id, $direccion, $telefono]);
+            $pdo->prepare("INSERT INTO canjes (id_usuario, id_recompensa, direccion, telefono) VALUES (?, ?, ?, ?)")
+                ->execute([$_SESSION['user_id'], $producto_id, $direccion, $telefono]);
 
             $pdo->commit();
-            $success = "¡Canje exitoso! Pronto recibirás tu recompensa en la dirección proporcionada.";
+            $success = $es_virtual
+                ? "¡Canje exitoso! Tu código de recompensa es: <strong>" . htmlspecialchars($telefono) . "</strong>"
+                : "¡Canje exitoso! Pronto recibirás tu recompensa en la dirección proporcionada.";
         } catch (Exception $e) {
             $pdo->rollBack();
             $errors[] = "Error al procesar el canje: " . $e->getMessage();
@@ -169,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <p><strong>Descripción:</strong> <?php echo htmlspecialchars($producto['descripcion']); ?></p>
 
   <?php if (!empty($success)): ?>
-    <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
+    <div class="alert alert-success"><?php echo $success; ?></div>
     <a href="rewards_store.php" class="btn btn-success btn-block mt-3">Volver a la Tienda</a>
   <?php else: ?>
     <?php if (!empty($errors)): ?>
@@ -183,14 +179,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="POST" action="redeem.php?id=<?php echo $producto_id; ?>" class="mt-4">
-      <div class="form-group">
-        <label for="direccion">Dirección de envío:</label>
-        <textarea name="direccion" id="direccion" class="form-control" rows="3" required><?php echo htmlspecialchars($direccion); ?></textarea>
-      </div>
-      <div class="form-group">
-        <label for="telefono">Teléfono de contacto:</label>
-        <input type="text" name="telefono" id="telefono" class="form-control" value="<?php echo htmlspecialchars($telefono); ?>" required>
-      </div>
+      <?php if (!$es_virtual): ?>
+        <div class="form-group">
+          <label for="direccion">Dirección de envío:</label>
+          <textarea name="direccion" id="direccion" class="form-control" rows="3" required><?php echo htmlspecialchars($direccion); ?></textarea>
+        </div>
+        <div class="form-group">
+          <label for="telefono">Teléfono de contacto:</label>
+          <input type="text" name="telefono" id="telefono" class="form-control" value="<?php echo htmlspecialchars($telefono); ?>" required>
+        </div>
+      <?php endif; ?>
       <div class="form-check mb-3">
         <input class="form-check-input" type="checkbox" id="confirmacion" name="confirmacion">
         <label class="form-check-label" for="confirmacion">
